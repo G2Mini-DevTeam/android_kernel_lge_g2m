@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -185,6 +185,15 @@ int msm_vidc_g_ctrl(void *instance, struct v4l2_control *control)
 		return msm_venc_g_ctrl(instance, control);
 	return -EINVAL;
 }
+int msm_vidc_s_ext_ctrl(void *instance, struct v4l2_ext_controls *control)
+{
+	struct msm_vidc_inst *inst = instance;
+	if (!inst || !control)
+		return -EINVAL;
+	if (inst->session_type == MSM_VIDC_ENCODER)
+		return msm_venc_s_ext_ctrl(instance, control);
+	return -EINVAL;
+}
 int msm_vidc_reqbufs(void *instance, struct v4l2_requestbuffers *b)
 {
 	struct msm_vidc_inst *inst = instance;
@@ -324,7 +333,6 @@ static inline void populate_buf_info(struct buffer_info *binfo,
 	binfo->num_planes = b->length;
 	binfo->memory = b->memory;
 	binfo->v4l2_index = b->index;
-	binfo->dequeued = false;
 	binfo->timestamp.tv_sec = b->timestamp.tv_sec;
 	binfo->timestamp.tv_usec = b->timestamp.tv_usec;
 	dprintk(VIDC_DBG, "%s: fd[%d] = %d b->index = %d",
@@ -341,6 +349,7 @@ static inline void repopulate_v4l2_buffer(struct v4l2_buffer *b,
 	b->index = binfo->v4l2_index;
 	b->timestamp.tv_sec = binfo->timestamp.tv_sec;
 	b->timestamp.tv_usec = binfo->timestamp.tv_usec;
+	binfo->dequeued = false;
 	for (i = 0; i < binfo->num_planes; ++i) {
 		b->m.planes[i].reserved[0] = binfo->fd[i];
 		b->m.planes[i].reserved[1] = binfo->buff_off[i];
@@ -716,26 +725,6 @@ int msm_vidc_release_buffers(void *instance, int buffer_type)
 	if (!inst)
 		return -EINVAL;
 
-	if (!inst->in_reconfig) {
-		rc = msm_comm_try_state(inst, MSM_VIDC_RELEASE_RESOURCES_DONE);
-		if (rc) {
-			dprintk(VIDC_ERR,
-					"Failed to move inst: %p to release res done\n",
-					inst);
-		}
-	}
-
-	/*
-	* In dynamic buffer mode, driver needs to release resources,
-	* but not call release buffers on firmware, as the buffers
-	* were never registered with firmware.
-	*/
-	if ((buffer_type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
-		(inst->buffer_mode_set[CAPTURE_PORT] ==
-				HAL_BUFFER_MODE_DYNAMIC)) {
-		goto free_and_unmap;
-	}
-
 	list_for_each_safe(ptr, next, &inst->registered_bufs) {
 		bool release_buf = false;
 		mutex_lock(&inst->lock);
@@ -774,8 +763,6 @@ int msm_vidc_release_buffers(void *instance, int buffer_type)
 				buffer_info.m.planes[0].reserved[1],
 				buffer_info.m.planes[0].length);
 	}
-
-free_and_unmap:
 	mutex_lock(&inst->lock);
 	list_for_each_safe(ptr, next, &inst->registered_bufs) {
 		bi = list_entry(ptr, struct buffer_info, list);
@@ -1109,16 +1096,9 @@ static int setup_event_queue(void *inst,
 				struct video_device *pvdev)
 {
 	int rc = 0;
-	unsigned long flags;
 	struct msm_vidc_inst *vidc_inst = (struct msm_vidc_inst *)inst;
 
-	//watchdog patch, to protect spinlock acquirement between cpu0 and cpu1
-	spin_lock_irqsave(&pvdev->fh_lock, flags);
-	INIT_LIST_HEAD(&pvdev->fh_list);
-
 	v4l2_fh_init(&vidc_inst->event_handler, pvdev);
-	spin_unlock_irqrestore(&pvdev->fh_lock, flags);
-
 	v4l2_fh_add(&vidc_inst->event_handler);
 
 	return rc;
@@ -1341,6 +1321,7 @@ int msm_vidc_close(void *instance)
 	if (!inst)
 		return -EINVAL;
 
+	v4l2_fh_del(&inst->event_handler);
 	list_for_each_safe(ptr, next, &inst->registered_bufs) {
 		bi = list_entry(ptr, struct buffer_info, list);
 		if (bi->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
@@ -1368,9 +1349,6 @@ int msm_vidc_close(void *instance)
 	else if (inst->session_type == MSM_VIDC_ENCODER)
 		msm_venc_ctrl_deinit(inst);
 
-	for (i = 0; i < MAX_PORT_NUM; i++)
-		vb2_queue_release(&inst->bufq[i].vb2_bufq);
-
 	cleanup_instance(inst);
 	if (inst->state != MSM_VIDC_CORE_INVALID &&
 		core->state != VIDC_CORE_INVALID)
@@ -1380,6 +1358,8 @@ int msm_vidc_close(void *instance)
 	if (rc)
 		dprintk(VIDC_ERR,
 			"Failed to move video instance to uninit state\n");
+	for (i = 0; i < MAX_PORT_NUM; i++)
+		vb2_queue_release(&inst->bufq[i].vb2_bufq);
 
 	pr_info(VIDC_DBG_TAG "Closed video instance: %p\n", VIDC_INFO, inst);
 	kfree(inst);
