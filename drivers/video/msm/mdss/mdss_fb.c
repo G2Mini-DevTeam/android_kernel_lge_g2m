@@ -227,113 +227,152 @@ end:
 
 static int lcd_backlight_registered;
 
-#if defined(CONFIG_LGE_MIPI_TOVIS_VIDEO_540P_PANEL)
+#if defined(CONFIG_FB_MSM_MIPI_TIANMA_VIDEO_QHD_PT_PANEL) || defined(CONFIG_MACH_MSM8926_X5_VZW)
 static int cal_value;
 static const char mapped_value[256] = {
-	0,  3,  3,  3,  3,  4,  4,  4,  4,  5,   //9
-	5,  5,  5,  5,  5,  5,  5,  5,  5,  5,   //19
-	5,  5,  5,  5,  5,  5,  5,  6,  6,  6,   //29
-	6,  6,  6,  6,  6,  6,  6,  6,  6,  7,   //39
-	7,  7,  7,  7,  7,  7,  7,  8,  8,  8,   //49
-	9,  9,  9,  9,  9,  10, 10, 10, 10, 10,  //59
-	11, 11, 11, 11, 12, 12, 12, 12, 13, 13,  //69
-	13, 14, 14, 14, 15, 15, 15, 16, 16, 16,  //79
-	17, 17, 17, 18, 18, 19, 20, 20, 21, 21,  //89
-	21, 22, 22, 23, 23, 23, 24, 24, 24, 25,  //99
-	25, 25, 27, 27, 28, 28, 29, 29, 31, 31,  //109
-	31, 32, 32, 32, 33, 33, 35, 35, 37, 37,  //119
-	37, 38, 38, 40, 40, 42, 42, 42, 42, 43,  //129
-	43, 45, 47, 47, 49, 49, 51, 51, 51, 53,  //139
-	53, 55, 55, 55, 57, 57, 57, 59, 59, 59,  //149
-	61, 61, 64, 64, 66, 66, 66, 68, 68, 71,  //159
-	71, 71, 73, 73, 73, 76, 76, 76, 78, 78,  //169
-	81, 81, 84, 84, 86, 86, 86, 86, 89, 89,  //179
-	92, 92, 95, 95, 95, 98, 98, 98,101,104,  //189
-	104,104,107,107,110,110,112,114,114,114, //199
-	117,117,120,120,124,124,124,128,128,132, //209
-	132,132,135,135,135,139,143,143,145,147, //219
-	147,147,151,151,159,159,159,159,161,163, //229
-	163,163,167,172,172,174,176,176,180,180, //239
-	185,185,185,187,189,189,189,194,198,200, //249
-	201,203,205,208,210,213                  //255
+0, 4, 4, 4, 4, 4, 4, 4, 4, 4, //9
+4, 4, 4, 4, 4, 4, 4, 4, 4, 4, //19
+4, 4, 4, 4, 4, 4, 4, 5, 5, 5, //29
+5, 5, 5, 5, 5, 5, 5, 6, 6, 6, //39
+6, 7, 7, 7, 7, 7, 8, 8, 8, 8, //49
+8, 9, 9, 9, 9, 9, 10, 10, 10, 11, //59
+11, 12, 12, 12, 12, 12, 13, 13, 14, 14, //69
+14, 15, 15, 16, 16, 16, 17, 17, 18, 18, //79
+18, 19, 19, 20, 21, 21, 22, 22, 23, 23, //89
+24, 25, 25, 26, 26, 27, 27, 28, 29, 29, //99
+30, 30, 30, 31, 31, 32, 32, 32, 34, 34, //109
+36, 36, 38, 38, 38, 41, 41, 42, 43, 44, //119
+45, 45, 46, 47, 48, 49, 49, 50, 51, 52, //129
+53, 53, 55, 55, 55, 56, 57, 59, 59, 60, //139
+61, 62, 64, 64, 65, 66, 67, 69, 69, 69, //149
+71, 71, 71, 71, 75, 75, 75, 78, 78, 82, //159
+83, 84, 85, 86, 88, 89, 90, 91, 92, 94, //169
+95, 96, 97, 98,100,101,102,104,105,107, //179
+107,107,107,110,110,113,113,116,116,116, //189
+120,120,123,123,127,127,127,130,130,130, //199
+134,134,138,138,142,142,146,146,146,150, //209
+150,150,154,154,154,158,158,162,162,162, //219
+166,166,171,171,175,175,175,179,179,184, //229
+184,188,188,193,193,193,198,198,202,202, //239
+202,207,207,207,214,214,217,217,222,222, //249
+222,228,228,233,233,239 //255
+};
+#elif defined(CONFIG_LGE_MIPI_TOVIS_VIDEO_540P_PANEL)
+static int cal_value;
+static const char mapped_value[256] = {
+0, 3, 3, 3, 3, 4, 4, 4, 4, 5, //9
+5, 5, 5, 5, 5, 5, 5, 5, 5, 5, //19
+5, 5, 5, 5, 5, 5, 5, 6, 6, 6, //29
+6, 6, 6, 6, 6, 6, 6, 6, 6, 7, //39
+7, 7, 7, 7, 7, 7, 7, 8, 8, 8, //49
+9, 9, 9, 9, 9, 10, 10, 10, 10, 10, //59
+11, 11, 11, 11, 12, 12, 12, 12, 13, 13, //69
+13, 14, 14, 14, 15, 15, 15, 16, 16, 16, //79
+17, 17, 17, 18, 18, 19, 20, 20, 21, 21, //89
+21, 22, 22, 23, 23, 23, 24, 24, 24, 25, //99
+25, 25, 27, 27, 28, 28, 29, 29, 31, 31, //109
+31, 32, 32, 32, 33, 33, 35, 35, 37, 37, //119
+37, 38, 38, 40, 40, 42, 42, 42, 42, 43, //129
+43, 45, 47, 47, 49, 49, 51, 51, 51, 53, //139
+53, 55, 55, 55, 57, 57, 57, 59, 59, 59, //149
+61, 61, 64, 64, 66, 66, 66, 68, 68, 71, //159
+71, 71, 73, 73, 73, 76, 76, 76, 78, 78, //169
+81, 81, 84, 84, 86, 86, 86, 86, 89, 89, //179
+92, 92, 95, 95, 95, 98, 98, 98,101,104, //189
+104,104,107,107,110,110,112,114,114,114, //199
+117,117,120,120,124,124,124,128,128,132, //209
+132,132,135,135,135,139,143,143,145,147, //219
+147,147,151,151,159,159,159,159,161,163, //229
+163,163,167,172,172,174,176,176,180,180, //239
+185,185,185,187,189,189,189,194,198,200, //249
+201,203,205,208,210,213 //255
 };
 #endif
 static void mdss_fb_set_bl_brightness(struct led_classdev *led_cdev,
-				      enum led_brightness value)
+enum led_brightness value)
 {
-	struct msm_fb_data_type *mfd = dev_get_drvdata(led_cdev->dev->parent);
-	int bl_lvl;
-
-	if (value > mfd->panel_info->brightness_max)
-		value = mfd->panel_info->brightness_max;
-
-	/* This maps android backlight level 0 to 255 into
-	   driver backlight level 0 to bl_max with rounding */
+struct msm_fb_data_type *mfd = dev_get_drvdata(led_cdev->dev->parent);
+int bl_lvl;
+if (value > MDSS_MAX_BL_BRIGHTNESS)
+value = MDSS_MAX_BL_BRIGHTNESS;
+/* This maps android backlight level 0 to 255 into
+driver backlight level 0 to bl_max with rounding */
 #if defined(CONFIG_LGE_MIPI_TOVIS_VIDEO_540P_PANEL) || defined(CONFIG_FB_MSM_MIPI_TIANMA_VIDEO_QHD_PT_PANEL)
-	cal_value = mapped_value[value];
-	MDSS_BRIGHT_TO_BL(bl_lvl, cal_value, mfd->panel_info->bl_max,
-			MDSS_MAX_BL_BRIGHTNESS);
-	pr_info("value=%d, cal_value=%d\n", value, cal_value);
+cal_value = mapped_value[value];
+MDSS_BRIGHT_TO_BL(bl_lvl, cal_value, mfd->panel_info->bl_max,
+MDSS_MAX_BL_BRIGHTNESS);
+pr_info("value=%d, cal_value=%d\n", value, cal_value);
 #else
-	MDSS_BRIGHT_TO_BL(bl_lvl, value, mfd->panel_info->bl_max,
-				mfd->panel_info->brightness_max);
+#if defined(CONFIG_MACH_MSM8926_X3_TRF_US) || defined(CONFIG_MACH_MSM8926_X3N_KR) || defined(CONFIG_MACH_MSM8926_F70N_KR) || defined(CONFIG_MACH_MSM8926_X3N_OPEN_EU) || defined(CONFIG_MACH_MSM8926_F70N_GLOBAL_COM) || \
+defined(CONFIG_MACH_MSM8926_X3N_GLOBAL_COM)
+if(value >= UI_BL_OFF && value <= UI_0_BL)
+bl_lvl = (value - UI_BL_OFF) * (LGE_0_BL - LGE_BL_OFF) / (UI_0_BL - UI_BL_OFF) + LGE_BL_OFF;
+else if(value >= UI_0_BL && value <= UI_20_BL)
+bl_lvl = (value - UI_0_BL) * (LGE_20_BL - LGE_0_BL) / (UI_20_BL - UI_0_BL) + LGE_0_BL;
+else if(value >UI_20_BL && value <= UI_40_BL)
+bl_lvl = (value - UI_20_BL) * (LGE_40_BL - LGE_20_BL) / (UI_40_BL - UI_20_BL) + LGE_20_BL;
+else if(value >UI_40_BL && value <= UI_60_BL)
+bl_lvl = (value - UI_40_BL) * (LGE_60_BL - LGE_40_BL) / (UI_60_BL - UI_40_BL) + LGE_40_BL;
+else if(value >UI_60_BL && value <= UI_80_BL)
+bl_lvl = (value - UI_60_BL) * (LGE_80_BL - LGE_60_BL) / (UI_80_BL - UI_60_BL) + LGE_60_BL;
+else if(value >UI_80_BL && value <= UI_MAX_BL)
+bl_lvl = (value - UI_80_BL) * (LGE_MAX_BL - LGE_80_BL) / (UI_MAX_BL - UI_80_BL) + LGE_80_BL;
+pr_debug("value=%d, bl_lvl=%d\n", value, bl_lvl);
+#else
+MDSS_BRIGHT_TO_BL(bl_lvl, value, mfd->panel_info->bl_max,
+MDSS_MAX_BL_BRIGHTNESS);
 #endif
-
-	if (!bl_lvl && value)
-		bl_lvl = 1;
-
-	if (!IS_CALIB_MODE_BL(mfd) && (!mfd->ext_bl_ctrl || !value ||
-							!mfd->bl_level)) {
-		mutex_lock(&mfd->bl_lock);
-		mdss_fb_set_backlight(mfd, bl_lvl);
-		mutex_unlock(&mfd->bl_lock);
-	}
+#endif
+if (!bl_lvl && value)
+bl_lvl = 1;
+if (!IS_CALIB_MODE_BL(mfd) && (!mfd->ext_bl_ctrl || !value ||
+!mfd->bl_level)) {
+mutex_lock(&mfd->bl_lock);
+mdss_fb_set_backlight(mfd, bl_lvl);
+mutex_unlock(&mfd->bl_lock);
 }
-
+}
 static struct led_classdev backlight_led = {
-	.name           = "lcd-backlight",
-	.brightness     = MDSS_MAX_BL_BRIGHTNESS,
-	.brightness_set = mdss_fb_set_bl_brightness,
+.name = "lcd-backlight",
+.brightness = MDSS_MAX_BL_BRIGHTNESS,
+.brightness_set = mdss_fb_set_bl_brightness,
 };
-
 static ssize_t mdss_fb_get_type(struct device *dev,
-				struct device_attribute *attr, char *buf)
+struct device_attribute *attr, char *buf)
 {
-	ssize_t ret = 0;
-	struct fb_info *fbi = dev_get_drvdata(dev);
-	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)fbi->par;
-
-	switch (mfd->panel.type) {
-	case NO_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "no panel\n");
-		break;
-	case HDMI_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "hdmi panel\n");
-		break;
-	case LVDS_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "lvds panel\n");
-		break;
-	case DTV_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "dtv panel\n");
-		break;
-	case MIPI_VIDEO_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "mipi dsi video panel\n");
-		break;
-	case MIPI_CMD_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "mipi dsi cmd panel\n");
-		break;
-	case WRITEBACK_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "writeback panel\n");
-		break;
-	case EDP_PANEL:
-		ret = snprintf(buf, PAGE_SIZE, "edp panel\n");
-		break;
-	default:
-		ret = snprintf(buf, PAGE_SIZE, "unknown panel\n");
-		break;
-	}
-
-	return ret;
+ssize_t ret = 0;
+struct fb_info *fbi = dev_get_drvdata(dev);
+struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)fbi->par;
+switch (mfd->panel.type) {
+case NO_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "no panel\n");
+break;
+case HDMI_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "hdmi panel\n");
+break;
+case LVDS_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "lvds panel\n");
+break;
+case DTV_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "dtv panel\n");
+break;
+case MIPI_VIDEO_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "mipi dsi video panel\n");
+break;
+case MIPI_CMD_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "mipi dsi cmd panel\n");
+break;
+case WRITEBACK_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "writeback panel\n");
+break;
+case EDP_PANEL:
+ret = snprintf(buf, PAGE_SIZE, "edp panel\n");
+break;
+default:
+ret = snprintf(buf, PAGE_SIZE, "unknown panel\n");
+break;
+}
+return ret;
 }
 
 static void mdss_fb_parse_dt(struct msm_fb_data_type *mfd)

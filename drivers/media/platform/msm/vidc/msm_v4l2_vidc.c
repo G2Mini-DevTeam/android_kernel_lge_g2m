@@ -121,10 +121,10 @@ int msm_v4l2_g_ctrl(struct file *file, void *fh,
 }
 
 int msm_v4l2_s_ext_ctrl(struct file *file, void *fh,
-struct v4l2_ext_controls *a)
+					struct v4l2_ext_controls *a)
 {
-struct msm_vidc_inst *vidc_inst = get_vidc_inst(file, fh);
-return msm_vidc_s_ext_ctrl((void *)vidc_inst, a);
+	struct msm_vidc_inst *vidc_inst = get_vidc_inst(file, fh);
+	return msm_vidc_s_ext_ctrl((void *)vidc_inst, a);
 }
 
 int msm_v4l2_reqbufs(struct file *file, void *fh,
@@ -249,7 +249,7 @@ static const struct v4l2_ioctl_ops msm_v4l2_ioctl_ops = {
 	.vidioc_streamoff = msm_v4l2_streamoff,
 	.vidioc_s_ctrl = msm_v4l2_s_ctrl,
 	.vidioc_g_ctrl = msm_v4l2_g_ctrl,
-	.vidioc_s_ext_ctrls = msm_v4l2_s_ext_ctrl,	
+	.vidioc_s_ext_ctrls = msm_v4l2_s_ext_ctrl,
 	.vidioc_subscribe_event = msm_v4l2_subscribe_event,
 	.vidioc_unsubscribe_event = msm_v4l2_unsubscribe_event,
 	.vidioc_decoder_cmd = msm_v4l2_decoder_cmd,
