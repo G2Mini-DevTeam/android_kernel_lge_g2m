@@ -42,13 +42,6 @@ struct dsi_buf {
 	dma_addr_t dmap; /* mapped dma addr */
 };
 
-#ifdef CONFIG_FB_MSM_MIPI_LGD_LH500WX9_VIDEO_HD_PT_PANEL
-/* dcs read/write */
-#define MIPI_DSI_V_SYNC_START		0x01
-#define MIPI_DSI_H_SYNC_START		0x21
-#define MIPI_DSI_PACKED_PIXEL_STREAM_24		0x3e
-#endif
-
 /* dcs read/write */
 #define DTYPE_DCS_WRITE		0x05	/* short write, 0 parameter */
 #define DTYPE_DCS_WRITE1	0x15	/* short write, 1 parameter */
@@ -105,6 +98,7 @@ struct dsi_cmd_desc {
 #define CMD_REQ_COMMIT  0x0002
 #define CMD_CLK_CTRL    0x0004
 #define CMD_REQ_NO_MAX_PKT_SIZE 0x0008
+#define CMD_REQ_LP_MODE 0x0010
 
 struct dcs_cmd_req {
 	struct dsi_cmd_desc *cmds;

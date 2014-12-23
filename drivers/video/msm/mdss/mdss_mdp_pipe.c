@@ -271,12 +271,10 @@ int mdss_mdp_smp_reserve(struct mdss_mdp_pipe *pipe)
 
 	nlines = pipe->bwc_mode ? 1 : 2;
 
- if defined(CONFIG_SEC_MATISSE_PROJECT) 
-       if (pipe->mixer->type == MDSS_MDP_MIXER_TYPE_WRITEBACK)
-	           wb_mixer = 1;
- endif
-	
-    force_alloc = pipe->flags & MDP_SMP_FORCE_ALLOC;
+	if (pipe->mixer->type == MDSS_MDP_MIXER_TYPE_WRITEBACK)
+		wb_mixer = 1;
+
+	force_alloc = pipe->flags & MDP_SMP_FORCE_ALLOC;
 
 	mutex_lock(&mdss_mdp_smp_lock);
 
@@ -339,8 +337,6 @@ int mdss_mdp_smp_reserve(struct mdss_mdp_pipe *pipe)
  * need to ensure that for a staged pipes, mmbs are set properly based on
  * allocated bitmap.
  */
-force_alloc = pipe->flags & MDP_SMP_FORCE_ALLOC;
-
 static int mdss_mdp_smp_alloc(struct mdss_mdp_pipe *pipe)
 {
 	int i;
